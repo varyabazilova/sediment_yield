@@ -61,15 +61,46 @@ class SedCas():
         
         # running the individual HRUs
         snow = list()
+        glacier = list()
         PET = list()
         hydro = list()
         for i in range(self.n_HRU):
             s = mod.degree_day_model(self.Ta.copy(), self.Pr.copy(), self.mrate, self.Tsa, self.Tsm, s0=0, Asnow = self.Asnow[i], Asoil = self.Anosnow[i])
             snow.append(s)
+
+            print('s variable', s)
+            print('...')
+            print('...')
+            print('...')
+
+            # glacier HRU:
+            if self.HRUs[i] == 'glacier':
+                g = mod.degree_day_model(self.Ta.copy(), self.Pr.copy(), self.mrate, self.Tsa, self.Tsm, s0=100000, Asnow = self.Asnow[i], Asoil = self.Anosnow[i])
+                glacier.append(g)
+
+                print('g variable', g)
+                print('...')
+                print('...')
+                print('...')
+
+                s = s.add(g)  # add snow and glaciers together
+
+                print('s with g variable', s)
+                print('...')
+                print('...')
+                print('...')
+
             pet = mod.ET_PT(1, self.Rsw, self.Ta, 1, s.albedo, self.Ele, 0.8, 1, 1, 1, 0, 0)
             PET.append(pet)
+
             h = mod.hydmod(s, pet, self.Pr, self.Ta, self.alphaET, len(self.Vwcaps[i]), {'k':self.ks[i], 'Scap':self.Vwcaps[i], 'S0':[0,0]})
+            if self.HRUs[i] == 'glacier':
+                h['glacier_melt'] = g.smelt
             hydro.append(h)
+
+            print('hydro variable', hydro)
+            print('...')
+            print('...')
 
         # lumped hydrology: adding individual HRUs
         hyd = pd.DataFrame(columns = hydro[0].columns, index =  hydro[0].index)
@@ -86,9 +117,13 @@ class SedCas():
             if 'Vw' in c:
                 if not c == 'Vw':
                     hyd.drop(columns = [c], inplace=True)
-                    
+    
+
+        # print('hyd', hyd)
+
         self.hydro = hyd
         
+    
     def run_sediment(self):
         
         # initialization of variables for stochastic sediment supply
@@ -129,6 +164,7 @@ class SedCas():
             
     def save_output(self):
         
+        print('hello world')
         self.hydro.to_csv('Hydro.out', header=True)
         
         sedout = pd.DataFrame(index=self.sed.index)
