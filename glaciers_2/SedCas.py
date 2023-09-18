@@ -78,17 +78,20 @@ class SedCas():
                 g = mod.degree_day_model(self.Ta.copy(), self.Pr.copy(), self.mrate, self.Tsa, self.Tsm, s0=100000, Asnow = self.Asnow[i], Asoil = self.Anosnow[i])
                 glacier.append(g)
 
-                # print('g variable', g)
-                # print('...')
-                # print('...')
-                # print('...')
+                print('g variable', g)
+                print('...')
+                print('...')
+                print('...')
+
+                # glacier should only melt once the snow is gone:
+                # g.smelt[s.smelt > 0] = 0
 
                 s = s.add(g)  # add snow and glaciers together
 
-                # print('s with g variable', s)
-                # print('...')
-                # print('...')
-                # print('...')
+                print('s with g variable', s)
+                print('...')
+                print('...')
+                print('...')
 
             pet = mod.ET_PT(1, self.Rsw, self.Ta, 1, s.albedo, self.Ele, 0.8, 1, 1, 1, 0, 0)
             PET.append(pet)
@@ -96,14 +99,17 @@ class SedCas():
             h = mod.hydmod(s, pet, self.Pr, self.Ta, self.alphaET, len(self.Vwcaps[i]), {'k':self.ks[i], 'Scap':self.Vwcaps[i], 'S0':[0,0]})
             if self.HRUs[i] == 'glacier':
                 h['glacier_melt'] = g.smelt
-                # print('h', h)
+                
+                # glaciers only melt once the snow is gone: 
+                h['glacier_melt'] = h.glacier_melt[s.smelt > 0] = 0
+                print('h', h)
             else:
                 h['glacier_melt'] = 0
             hydro.append(h)
 
-            # print('hydro variable', hydro)
-            # print('...')
-            # print('...')
+            print('hydro variable', hydro)
+            print('...')
+            print('...')
 
         # lumped hydrology: adding individual HRUs
         hyd = pd.DataFrame(columns = hydro[0].columns, index =  hydro[0].index)
