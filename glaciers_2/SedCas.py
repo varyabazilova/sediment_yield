@@ -68,30 +68,30 @@ class SedCas():
             s = mod.degree_day_model(self.Ta.copy(), self.Pr.copy(), self.mrate, self.Tsa, self.Tsm, s0=0, Asnow = self.Asnow[i], Asoil = self.Anosnow[i])
             snow.append(s)
 
-            # print('s variable', s)
-            # print('...')
-            # print('...')
-            # print('...')
+            print('s variable', s)
+            print('...')
+            print('...')
+            print('...')
 
             # glacier HRU:
             if self.HRUs[i] == 'glacier':
                 g = mod.degree_day_model(self.Ta.copy(), self.Pr.copy(), self.mrate, self.Tsa, self.Tsm, s0=100000, Asnow = self.Asnow[i], Asoil = self.Anosnow[i])
-                glacier.append(g)
+                glacier.append(g) 
 
-                # print('g variable', g)
-                # print('...')
-                # print('...')
-                # print('...')
+                print('g variable', g)
+                print('...')
+                print('...')
+                print('...')
 
                 # glacier should only melt once the snow is gone:
                 # g.smelt[s.smelt > 0] = 0
 
                 s = s.add(g)  # add snow and glaciers together
 
-                # print('s with g variable', s)
-                # print('...')
-                # print('...')
-                # print('...')
+                print('s with g variable', s)
+                print('...')
+                print('...')
+                print('...')
 
             pet = mod.ET_PT(1, self.Rsw, self.Ta, 1, s.albedo, self.Ele, 0.8, 1, 1, 1, 0, 0)
             PET.append(pet)
