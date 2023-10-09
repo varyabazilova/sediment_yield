@@ -58,6 +58,8 @@ def degree_day_model(T, P, m, Ta, Tm, s0=0, Asnow=0.8, Asoil=0.3):
     
     # compute actual snow depth
     depth = np.zeros(len(P))
+    # make sure that the initial 'depth' equals the s0 input
+    depth[0] = s0
     ddepth = np.zeros(len(P))
     for i in range(1,len(P)):
         depth[i] = depth[i-1] + acc[i] - melt[i]

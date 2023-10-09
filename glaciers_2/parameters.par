@@ -2,7 +2,7 @@ SedCas Parameters
 
 n_HRU: 	 		3
 HRUs: 	 		['forest', 'bedrock', 'glacier']
-Vwcaps: 		[[72,27], [4], [0]]
+Vwcaps: 		[[72,27], [4], [0.25]]
 ks: 	 		[[94, 235], [23], [1]]
 shares: 	 	[0.50, 0.40, 0.1]
 Asnow:			[0.4, 0.65, 0.65]
