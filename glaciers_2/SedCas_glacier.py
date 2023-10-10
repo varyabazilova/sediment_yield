@@ -135,7 +135,10 @@ class SedCas():
     
         # destinguish between snow melt and ice melt
         hyd['snow_melt'] = np.where(h['snowacc'] < 0, h['snowacc']* -1, 0)
-        # print('hyd', hyd)
+        hyd['snow_melt'] = hyd['snow_melt'] - hyd['glacier_melt']
+
+
+
 
         self.hydro = hyd
         
