@@ -87,10 +87,16 @@ class SedCas():
                 g.smelt[s.depth > 0] = 0
                 # glacier "depth" is zero
                 g.depth = 0
+                
+                # destinguish between snow melt and ice melt
+                # g.snow_melt'] = np.where(h['snowacc'] < 0, h['snowacc']* -1, 0)
+                # hyd['snow_melt'] = hyd['snow_melt'] - hyd['glacier_melt']
+
 
                 s = s.add(g)  # add snow and glaciers together
 
                 print('s with g variable', s)
+                s
                 print('...')
                 print('...')
                 print('...')
@@ -101,12 +107,15 @@ class SedCas():
             h = mod.hydmod(s, pet, self.Pr, self.Ta, self.alphaET, len(self.Vwcaps[i]), {'k':self.ks[i], 'Scap':self.Vwcaps[i], 'S0':[0,0]})
             if self.HRUs[i] == 'glacier':
                 h['glacier_melt'] = g.smelt
+
+                # for the glacier HRU: snow melt vs glaceir melt
+                h['snow_melt'] = np.where(h['snowacc'] < 0, h['snowacc']* -1, 0)
+                h['snow_melt'] = h['snow_melt'] - h['glacier_melt']
                 
-                # # glaciers only melt once the snow is gone: 
-                # h['glacier_melt'] = h.glacier_melt[s.smelt > 0] = 0
-                # print('h', h)
             else:
                 h['glacier_melt'] = 0
+
+                h['snow_melt'] = np.where(h['snowacc'] < 0, h['snowacc']* -1, 0)
 
             hydro.append(h)
 
@@ -133,9 +142,10 @@ class SedCas():
                 if not c == 'Vw':
                     hyd.drop(columns = [c], inplace=True)
     
-        # destinguish between snow melt and ice melt
-        hyd['snow_melt'] = np.where(h['snowacc'] < 0, h['snowacc']* -1, 0)
-        hyd['snow_melt'] = hyd['snow_melt'] - hyd['glacier_melt']
+    
+        # # destinguish between snow melt and ice melt
+        # hyd['snow_melt'] = np.where(h['snowacc'] < 0, h['snowacc']* -1, 0)
+        # hyd['snow_melt'] = hyd['snow_melt'] - hyd['glacier_melt']
 
 
 
@@ -181,6 +191,7 @@ class SedCas():
             
         self.sed = sed
             
+
     def save_output(self):
         
         print('hello world')
@@ -191,6 +202,8 @@ class SedCas():
         for q in quants:
             c = 'Q%i'%q
             sedout[c] = np.percentile(self.sed.so, q, axis=1)
+
+
         sedout['Qstl'] = self.sed.sopot[:,0]
         sedout['Qdftl'] = self.sed.dfspot          # save debris flows
         sedout.to_csv('Sediment.out', header=True)
