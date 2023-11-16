@@ -96,7 +96,6 @@ class SedCas():
                 s = s.add(g)  # add snow and glaciers together
 
                 print('s with g variable', s)
-                s
                 print('...')
                 print('...')
                 print('...')
@@ -111,7 +110,7 @@ class SedCas():
                 # for the glacier HRU: snow melt vs glaceir melt
                 h['snow_melt'] = np.where(h['snowacc'] < 0, h['snowacc']* -1, 0)
                 h['snow_melt'] = h['snow_melt'] - h['glacier_melt']
-                
+
             else:
                 h['glacier_melt'] = 0
 
@@ -141,13 +140,6 @@ class SedCas():
             if 'Vw' in c:
                 if not c == 'Vw':
                     hyd.drop(columns = [c], inplace=True)
-    
-    
-        # # destinguish between snow melt and ice melt
-        # hyd['snow_melt'] = np.where(h['snowacc'] < 0, h['snowacc']* -1, 0)
-        # hyd['snow_melt'] = hyd['snow_melt'] - hyd['glacier_melt']
-
-
 
 
         self.hydro = hyd
