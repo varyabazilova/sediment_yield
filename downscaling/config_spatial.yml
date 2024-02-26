@@ -15,7 +15,7 @@ project:
         time: 1  # run indivudal batch in time
         space: None  # to be implemented
     extent: [29, 28, 85, 86]
-    CPU_cores: 6
+    CPU_cores: 8
     climate: era5
     
 climate:
